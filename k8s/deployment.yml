@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app-deployment
+  labels:
+    app: notes-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: notes-app
+  template:
+    metadata:
+      labels:
+        app: notes-app
+    spec:
+      containers:
+      - name: notes-app-deployment
+        image: gabvillacis93/notes-app-cicd:latest
+        resources:
+          requests:
+            cpu: "300m"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
