@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image
+name: Publish Docker Image to Amazon ECR and Deploy to Amazon EKS
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-push-docker-image:
-    name: Build and push Docker Image to Amazon ECR
+  deploy:
+    name: Build Image and Deploy to Amazon ECR
     runs-on: ubuntu-latest
 
     steps:
@@ -25,9 +25,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ECR_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_ECR_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_ECR_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
         
       - name: Login to Amazon ECR
         id: login-ecr
@@ -35,9 +35,9 @@ jobs:
 
       - name: Build and Push of Docker Image to Amazon ECR
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: notes-app-cicd
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}    
+          IMAGE_TAG: latest          
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:v1.0 -f Dockerfile .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:v1.0  
+          docker build -t $ECR_REGISTRY/${{ vars.ECR_REPOSITORY }}:$IMAGE_TAG -f Dockerfile .
+          docker push $ECR_REGISTRY/${{ vars.ECR_REPOSITORY }}:$IMAGE_TAG 
       
