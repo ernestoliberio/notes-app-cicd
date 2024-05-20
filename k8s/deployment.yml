@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: notes-app
-        image: gabvillacis93/notes-app-cicd:latest
+        image: ${IMAGE_URL}:${IMAGE_TAG}
         resources:
           requests:
             cpu: "300m"
